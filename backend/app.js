@@ -126,6 +126,97 @@ app.delete("/urls/:urlId", async (req, res) => {
     }
 });
 
+// POST - Track QR code view
+app.post("/qr/track", async (req, res) => {
+    try {
+        const { shortCode, action } = req.body;
+
+        if (!shortCode || !action) {
+            return res.status(400).json({ message: "ShortCode and action are required" });
+        }
+
+        const url = await Url.findOne({ shortCode });
+        if (!url) {
+            return res.status(404).json({ message: "URL not found" });
+        }
+
+        // Update counters based on action
+        if (action === 'view') url.qrScans += 1;
+        else if (action === 'download') url.qrDownloads += 1;
+        else if (action === 'copy') url.qrCopies += 1;
+        else if (action === 'scan') url.qrScans += 1;
+
+        // Add to history
+        url.qrScanHistory.push({
+            timestamp: new Date(),
+            action: action,
+            ipAddress: req.ip,
+            userAgent: req.get('User-Agent')
+        });
+
+        await url.save();
+        res.status(200).json({ message: "QR action tracked successfully", url });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error tracking QR action" });
+    }
+});
+
+// GET - Get QR analytics for a short URL
+app.get("/qr/analytics/:shortCode", async (req, res) => {
+    try {
+        const { shortCode } = req.params;
+
+        const url = await Url.findOne({ shortCode });
+        if (!url) {
+            return res.status(404).json({ message: "URL not found" });
+        }
+
+        res.status(200).json({
+            shortCode,
+            qrScans: url.qrScans,
+            qrDownloads: url.qrDownloads,
+            qrCopies: url.qrCopies,
+            totalInteractions: url.qrScans + url.qrDownloads + url.qrCopies,
+            recentActivity: url.qrScanHistory.slice(-10).reverse()
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error fetching QR analytics" });
+    }
+});
+
+// GET - Get QR code for a short URL
+app.get("/qr/:shortCode", async (req, res) => {
+    try {
+        const { shortCode } = req.params;
+
+        const url = await Url.findOne({ shortCode });
+        if (!url) {
+            return res.status(404).json({ message: "URL not found" });
+        }
+
+        // Track QR access
+        url.qrScans += 1;
+        url.qrScanHistory.push({
+            timestamp: new Date(),
+            action: 'scan',
+            ipAddress: req.ip,
+            userAgent: req.get('User-Agent')
+        });
+        await url.save();
+
+        res.status(200).json({
+            shortCode,
+            qrCode: url.qrCode,
+            shortUrl: `http://localhost:3000/${shortCode}`
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error fetching QR code" });
+    }
+});
+
 const port = 3000;
 app.listen(port, () => {
     console.log("Server running at port: localhost:" + port);
