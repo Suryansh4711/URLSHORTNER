@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CopyButton } from '@/components/ui/copy-button';
+import { QRButton } from './QRButton';
 import { LinkDurationSelector } from './LinkDurationSelector';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
@@ -144,6 +145,7 @@ const DimensionalCompression = ({ urlInput, setUrlInput, onCompress, urls, error
                           localhost:3000/{url.shortCode}
                         </code>
                         <CopyButton value={`localhost:3000/${url.shortCode}`} copyMessage="Copied!" />
+                        <QRButton shortCode={url.shortCode} />
                         <button
                           onClick={() => handleDeleteClick(url._id, url.shortCode)}
                           disabled={deletingUrlId === url._id}
