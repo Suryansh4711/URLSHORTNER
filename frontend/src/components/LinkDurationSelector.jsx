@@ -1,41 +1,41 @@
 import React, { useState } from 'react'
-import { Clock, Calendar } from 'lucide-react'
+import { Clock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { Calendar as CalendarComponent } from '@/components/ui/calendar'
-import { TimePicker } from '@/components/ui/time-picker'
-import { format } from 'date-fns'
+// import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+// import { Calendar as CalendarComponent } from '@/components/ui/calendar'
+// import { TimePicker } from '@/components/ui/time-picker'
+// import { format } from 'date-fns'
 
 const LinkDurationSelector = ({ onDurationChange }) => {
   const [customDuration, setCustomDuration] = useState('')
   const [isCustom, setIsCustom] = useState(false)
-  const [useCustomDateTime, setUseCustomDateTime] = useState(false)
-  const [selectedDate, setSelectedDate] = useState(new Date())
-  const [selectedTime, setSelectedTime] = useState('00:00')
+  // const [useCustomDateTime, setUseCustomDateTime] = useState(false)
+  // const [selectedDate, setSelectedDate] = useState(new Date())
+  // const [selectedTime, setSelectedTime] = useState('00:00')
 
   const handleCustomDuration = () => {
     if (customDuration) {
       const value = parseInt(customDuration)
       if (value > 0) {
         setIsCustom(true)
-        setUseCustomDateTime(false)
+        // setUseCustomDateTime(false)
         onDurationChange({ duration: value, unit: 'day', custom: true })
       }
     }
   }
 
-  const handleDateTimeSelection = () => {
-    if (selectedDate && selectedTime) {
-      setUseCustomDateTime(true)
-      setIsCustom(false)
-      onDurationChange({ 
-        date: format(selectedDate, 'yyyy-MM-dd'),
-        time: selectedTime,
-        custom: true,
-        type: 'datetime'
-      })
-    }
-  }
+  // const handleDateTimeSelection = () => {
+  //   if (selectedDate && selectedTime) {
+  //     setUseCustomDateTime(true)
+  //     setIsCustom(false)
+  //     onDurationChange({ 
+  //       date: format(selectedDate, 'yyyy-MM-dd'),
+  //       time: selectedTime,
+  //       custom: true,
+  //       type: 'datetime'
+  //     })
+  //   }
+  // }
 
   return (
     <div className="p-6 bg-gradient-to-br from-cyan-500/10 to-magenta-500/10 border border-cyan-500/30 rounded-2xl backdrop-blur-md">
@@ -73,12 +73,13 @@ const LinkDurationSelector = ({ onDurationChange }) => {
           )}
         </div>
 
-        {/* Date & Time Picker */}
+        {/* FUTURE: Date & Time Picker Section - Commented out for future use */}
+        {/* 
         <div className="mt-6 pt-6 border-t border-cyan-500/20">
           <p className="text-sm text-gray-400 mb-4">Or set exact expiration date & time:</p>
           
           {/* Date Picker */}
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <p className="text-xs text-gray-500 mb-2">Select Date:</p>
             <Popover>
               <PopoverTrigger asChild>
@@ -107,7 +108,7 @@ const LinkDurationSelector = ({ onDurationChange }) => {
           </div>
 
           {/* Time Picker */}
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <p className="text-xs text-gray-500 mb-2">Select Time:</p>
             <TimePicker value={selectedTime} onChange={setSelectedTime} />
           </div>
@@ -125,11 +126,12 @@ const LinkDurationSelector = ({ onDurationChange }) => {
             </p>
           )}
         </div>
+        */}
 
         {/* Info */}
         <div className="mt-6 p-4 bg-cyan-500/10 border border-cyan-500/20 rounded-lg">
           <p className="text-xs text-cyan-300">
-            💡 Tip: Choose a custom duration in days or set a specific expiration date and time for your shortened link.
+            💡 Tip: Set a custom duration in days for your shortened link validity.
           </p>
         </div>
       </div>
